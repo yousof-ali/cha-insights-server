@@ -63,6 +63,14 @@ async function run() {
             res.send(result)
         })
 
+
+        app.delete('/delete/:id',async(req,res) => {
+            const ids = req.params.id
+            const query = {_id : new ObjectId(ids)}
+            const result = await chaCollections.deleteOne(query);
+            res.send(result);
+        })
+
         app.get('/details/:id',async(req,res) => {
             const chaID = req.params.id
             const query = {_id: new ObjectId(chaID)}
