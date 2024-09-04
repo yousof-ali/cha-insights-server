@@ -29,6 +29,8 @@ async function run() {
         const database = client.db("chaDB");
         const chaCollections = database.collection("CHAinsights");
 
+        const userCollections = client.db('chaDB').collection('chaUser');
+
         app.post('/cha',async(req,res) => {
             const newCha = req.body;
             const result = await chaCollections.insertOne(newCha);
@@ -76,6 +78,40 @@ async function run() {
             const query = {_id: new ObjectId(chaID)}
             const data = await chaCollections.findOne(query);
             res.send(data);
+        })
+
+
+        // user api 
+
+        app.post('/user',async(req,res)=>{
+            const user = req.body
+            const result = await userCollections.insertOne(user);
+            res.send(result);
+        })
+
+        app.get('/users',async(req,res) => {
+            const cursor = userCollections.find();
+            const allUser = await cursor.toArray()
+            res.send(allUser);
+        })
+
+        app.delete('/userdelete/:id',async(req,res) => {
+            const deleteId = req.params.id
+            const query = {_id: new ObjectId(deleteId)}
+            const result = await userCollections.deleteOne(query);
+            res.send(result);
+        })
+
+        app.patch('/update',async(req,res) => {
+            const data = req.body;
+            const filter = {email: data.email}
+            const updatedField = {
+                $set:{
+                    lastSignInTime:data.newCreationTime
+                }
+            }
+            const result =await userCollections.updateOne(filter,updatedField)
+            res.send(result);
         })
 
         await client.db("admin").command({ping: 1});
