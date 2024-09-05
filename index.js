@@ -103,11 +103,12 @@ async function run() {
         })
 
         app.patch('/update',async(req,res) => {
-            const data = req.body;
-            const filter = {email: data.email}
+            const reqdata = req.body;
+            console.log(reqdata)
+            const filter = {email: reqdata.email}
             const updatedField = {
                 $set:{
-                    lastSignInTime:data.newCreationTime
+                    creatAt:reqdata.creationTime
                 }
             }
             const result =await userCollections.updateOne(filter,updatedField)
